@@ -1,4 +1,6 @@
 from scrapers.iitd_scraper import scrape_iitd
+from scrapers.iitb_scraper import scrape_iitb
+from scrapers.iitbhu_scraper import scrape_iitbhu
 from database.save_jobs import save_jobs
 from classifier.classify import classify_job
 
@@ -11,6 +13,8 @@ def run_all():
     # Step 1: Scrape all institutes
     print('Scraping institutes...')
     all_jobs += scrape_iitd()
+    all_jobs += scrape_iitb()
+    all_jobs += scrape_iitbhu()
     # Add more scrapers here as you build them:
     # all_jobs += scrape_iitb()
     # all_jobs += scrape_nitr()
@@ -32,3 +36,4 @@ def run_all():
 
 if __name__ == '__main__':
     run_all()
+
