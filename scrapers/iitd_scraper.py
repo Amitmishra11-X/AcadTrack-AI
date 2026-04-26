@@ -1,6 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
+from urllib.parse import urljoin
+
 
 def scrape_iitd():
     url = "https://home.iitd.ac.in/"
@@ -21,26 +23,29 @@ def scrape_iitd():
     links = soup.find_all('a')
 
     keywords = ['recruitment', 'walk', 'jrf', 'project', 'faculty', 'intern']
+    seen = set()
 
     for link in links:
-        text = link.get_text(strip=True).lower()
+        text = link.get_text(strip=True)
         href = link.get('href')
 
         if not text or not href:
             continue
 
         # Filter only job-related announcements
-        if any(k in text for k in keywords):
-
-            # Fix relative links
-            if not href.startswith('http'):
-                href = "https://home.iitd.ac.in/" + href
+        text_lower = text.lower()
+        if any(k in text_lower for k in keywords):
+            full_link = urljoin(url, href.strip())
+            dedupe_key = (text_lower, full_link)
+            if dedupe_key in seen:
+                continue
+            seen.add(dedupe_key)
 
             jobs.append({
                 'title': text,
                 'institute': 'IIT Delhi',
                 'deadline': 'Check link',
-                'link': href,
+                'link': full_link,
                 'category': None,
                 'scraped_at': datetime.now().isoformat()
             })

@@ -1,13 +1,18 @@
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
+import urllib3
+
+# disable SSL warning
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
 
 def scrape_india_science():
     url = "https://www.indiascienceandtechnology.gov.in/listingpage/internships"
     headers = {'User-Agent': 'Mozilla/5.0'}
 
     try:
-        res = requests.get(url, headers=headers, timeout=10)
+        res = requests.get(url, headers=headers, timeout=10, verify=False)
         res.raise_for_status()
     except Exception as e:
         print(f"Error fetching India Science portal: {e}")
@@ -17,31 +22,28 @@ def scrape_india_science():
 
     jobs = []
 
-    rows = soup.select('table tr')
+    # 🔹 simple card selector (first visible items only)
+    cards = soup.select('.view-content .views-row')
 
-    for row in rows[1:]:
-        cols = row.find_all('td')
+    for card in cards:
+        title_tag = card.find('h3')
+        title = title_tag.get_text(strip=True) if title_tag else None
 
-        if len(cols) < 2:
-            continue
+        link_tag = card.find('a')
+        link = link_tag['href'] if link_tag else None
 
-        title = cols[0].get_text(strip=True)
-        institute = cols[1].get_text(strip=True)
+        if link and not link.startswith('http'):
+            link = "https://www.indiascienceandtechnology.gov.in" + link
 
-        eligibility = cols[2].get_text(strip=True) if len(cols) > 2 else ''
-        area = cols[3].get_text(strip=True) if len(cols) > 3 else ''
-        duration = cols[4].get_text(strip=True) if len(cols) > 4 else ''
-
-        jobs.append({
-            'title': title,
-            'institute': institute,
-            'eligibility': eligibility,
-            'area': area,
-            'deadline': duration,
-            'link': url,
-            'category': 'Internship',
-            'scraped_at': datetime.now().isoformat()
-        })
+        if title:
+            jobs.append({
+                'title': title,
+                'institute': 'India Science Portal',
+                'deadline': 'Check link',
+                'link': link,
+                'category': 'Internship',
+                'scraped_at': datetime.now().isoformat()
+            })
 
     print(f"Found {len(jobs)} internships from India Science portal")
     return jobs
