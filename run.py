@@ -3,6 +3,7 @@ from scrapers.iitb_scraper import scrape_iitb
 from scrapers.iitbhu_scraper import scrape_iitbhu
 from database.save_jobs import save_jobs
 from classifier.classify import classify_job
+from scrapers.indiascience_scraper import scrape_india_science
 
 def run_all():
     print('=== AcadTrack AI — Starting scrape ===')
@@ -15,7 +16,8 @@ def run_all():
     all_jobs += scrape_iitd()
     all_jobs += scrape_iitb()
     all_jobs += scrape_iitbhu()
-    # Add more scrapers here as you build them:
+    all_jobs += scrape_india_science()
+    # Add more scrapers 
     # all_jobs += scrape_iitb()
     # all_jobs += scrape_nitr()
 

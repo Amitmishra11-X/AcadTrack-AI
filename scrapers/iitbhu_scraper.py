@@ -18,11 +18,14 @@ def scrape_iitbhu():
     soup = BeautifulSoup(response.text, 'html.parser')
 
     jobs = []
-    rows = soup.select('table tr')
+    table = soup.find('table')
+    rows = table.find_all('tr') if table else []
 
     for row in rows[1:]:
         cols = row.find_all('td')
-
+        if len(title) < 5:
+            continue
+    
         if len(cols) < 2:
             continue
 
