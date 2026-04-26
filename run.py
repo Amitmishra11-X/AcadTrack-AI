@@ -1,3 +1,6 @@
+from turtle import title
+
+from ml.predict import predict_category
 from scrapers.iitd_scraper import scrape_iitd
 from database.save_jobs import save_jobs
 from classifier.classify import classify_job
@@ -21,9 +24,9 @@ def run_all():
     # all_jobs += scrape_nitr()
 
     # Step 2: Classify each job
-    print(f'Classifying {len(all_jobs)} jobs...')
-    for job in all_jobs:
-        job['category'] = classify_job(job['title'])
+    from ml.predict import predict_category
+    category = predict_category(title)
+   
 
     # Step 3: Save to MongoDB
     print('Saving to database...')
