@@ -1,6 +1,6 @@
 import schedule
 import time
-from run import run_all   # your main function
+from run import run_all   # your main scraping function
 
 def job():
     print("Running scraper...")
@@ -10,7 +10,7 @@ def job():
 # ⏰ Run every 6 hours
 schedule.every(6).hours.do(job)
 
-# Run once at start
+# Run once immediately
 job()
 
 while True:
